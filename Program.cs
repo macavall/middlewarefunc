@@ -1,6 +1,7 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 internal class Program
@@ -52,3 +54,29 @@ internal sealed class MyCustomMiddleware : IFunctionsWorkerMiddleware
         reqData.Body.Position = 0;
     }
 }
+
+//public static void Main()
+//{
+//    var host = new HostBuilder()
+//        .ConfigureFunctionsWorkerDefaults()
+//        .ConfigureAppConfiguration(configuration =>
+//        {
+//            var config = configuration.SetBasePath(Directory.GetCurrentDirectory())
+//                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true);
+
+//            var builtConfig = config.Build();
+//        })
+//        .ConfigureServices(services =>
+//        {
+//            services.AddSingleton<IMemoryStore>(new VolatileMemoryStore());
+
+//            // return JSON with expected lowercase naming
+//            services.Configure<JsonSerializerOptions>(options =>
+//            {
+//                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+//            });
+//        })
+//        .Build();
+
+//    host.Run();
+//}

@@ -35,6 +35,10 @@ internal class Program
             services.AddApplicationInsightsTelemetryWorkerService();
             services.ConfigureFunctionsApplicationInsights();
         })
+        .ConfigureLogging(logging =>
+        {
+            logging.AddFilter("Microsoft.*", LogLevel.Trace);
+        })
         .Build();
 
         await host.RunAsync();

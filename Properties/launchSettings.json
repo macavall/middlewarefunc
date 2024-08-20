@@ -2,7 +2,7 @@
   "profiles": {
     "MiddlewareFunc": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7288"
+      "commandLineArgs": "--port 7288 --verbose"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

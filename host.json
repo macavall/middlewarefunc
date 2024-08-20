@@ -1,12 +1,37 @@
 {
-    "version": "2.0",
-    "logging": {
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "excludedTypes": "Request"
-            },
-            "enableLiveMetricsFilters": true
-        }
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      },
+      "enableLiveMetricsFilters": true
+    },
+    "fileLoggingMode": "always",
+    "console": {
+      "isEnabled": "true"
+    },
+    "logLevel": {
+      "Default": "Trace",
+      "Microsoft": "Trace",
+      "Microsoft.Hosting.Lifetime": "Trace",
+      "Host.Triggers.DurableTask": "Trace",
+      "DurableTask.AzureStorage": "Trace",
+      "DurableTask.Core": "Trace",
+      "Host.Results": "Trace",
+      "Function": "Trace",
+      "Host.Aggregator": "Trace",
+      "Microsoft.Azure.WebJobs.Script.WebHost.Diagnostics.SystemLoggerProvider": "Trace",
+      "Azure.Functions.Cli.Diagnostics.ColoredConsoleLoggerProvider": "Trace",
+      "Microsoft.Azure.WebJobs.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider": "Trace",
+      "Microsoft.Azure.Functions.Worker.ApplicationInsights": "Trace"
+    },
+    "applicationInsights": {
+      "samplingExcludedTypes": "Request",
+      "samplingSettings": {
+        "isEnabled": true
+      }
     }
+  }
 }

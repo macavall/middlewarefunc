@@ -17,18 +17,8 @@ internal class Program
         var host = new HostBuilder()
         .ConfigureFunctionsWorkerDefaults(workerApplication =>
         {
-            // Register our custom middlewares with the worker
-
-            //workerApplication.UseMiddleware<ExceptionHandlingMiddleware>();
 
             workerApplication.UseMiddleware<MyCustomMiddleware>();
-
-            //workerApplication.UseWhen<StampHttpHeaderMiddleware>((context) =>
-            //{
-            //    // We want to use this middleware only for http trigger invocations.
-            //    return context.FunctionDefinition.InputBindings.Values
-            //                  .First(a => a.Type.EndsWith("Trigger")).Type == "httpTrigger";
-            //});
         })
         .ConfigureServices(services =>
         {

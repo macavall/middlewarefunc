@@ -46,99 +46,49 @@ public class CustomTelemetryInitializer : ITelemetryInitializer
 {
     public void Initialize(ITelemetry telemetry)
     {
-        if (telemetry is RequestTelemetry requestTelemetry)
+        if (telemetry is MetricTelemetry metricTelemetry)
         {
-            // Example: Modify request telemetry
-            AlterTelemetry(requestTelemetry);
+            // Use reflection to inspect and potentially modify MetricTelemetry
+            AlterMetricTelemetry(metricTelemetry);
         }
-        else if (telemetry is DependencyTelemetry dependencyTelemetry)
+        else if (telemetry is PerformanceCounterTelemetry performanceCounterTelemetry)
         {
-            // Example: Modify dependency telemetry (outgoing REST requests)
-            AlterTelemetry(dependencyTelemetry);
+            // Use reflection to inspect and potentially modify PerformanceCounterTelemetry
+            AlterPerformanceCounterTelemetry(performanceCounterTelemetry);
         }
     }
 
-    private void AlterTelemetry(object telemetry)
+    private void AlterMetricTelemetry(MetricTelemetry metricTelemetry)
     {
-        // Use reflection to alter the telemetry properties
-        var type = telemetry.GetType();
-
-        // Modify properties using reflection, for example:
-        var urlProperty = type.GetProperty("Url");
-        if (urlProperty != null)
+        // Use reflection to get metric details (e.g., CPU usage, thread count)
+        var metricNameProperty = metricTelemetry.GetType().GetProperty("Name");
+        if (metricNameProperty != null)
         {
-            var urlValue = urlProperty.GetValue(telemetry) as Uri;
-            if (urlValue != null)
+            string metricName = metricNameProperty.GetValue(metricTelemetry) as string;
+            if (metricName == "Processor Time" || metricName == "Thread Count")
             {
-                // Modify the URL or other properties
-                urlProperty.SetValue(telemetry, new Uri(urlValue.ToString().Replace("http:", "https:")));
+                Console.WriteLine($"Metric: {metricName}, Value: {metricTelemetry.Sum}");
             }
         }
 
-        // Modify other properties as needed
-        var responseCodeProperty = type.GetProperty("ResponseCode");
-        if (responseCodeProperty != null)
+        // Add or modify custom properties if needed
+        metricTelemetry.Properties["CustomMetricProperty"] = "CustomValue";
+    }
+
+    private void AlterPerformanceCounterTelemetry(PerformanceCounterTelemetry performanceCounterTelemetry)
+    {
+        // Use reflection to get performance counter details
+        var counterNameProperty = performanceCounterTelemetry.GetType().GetProperty("CounterName");
+        if (counterNameProperty != null)
         {
-            var responseCodeValue = responseCodeProperty.GetValue(telemetry) as string;
-            if (!string.IsNullOrEmpty(responseCodeValue) && responseCodeValue == "200")
+            string counterName = counterNameProperty.GetValue(performanceCounterTelemetry) as string;
+            if (counterName == @"\Processor(_Total)\% Processor Time" || counterName == @"\Thread Count")
             {
-                responseCodeProperty.SetValue(telemetry, "201");
+                Console.WriteLine($"Counter: {counterName}, Value: {performanceCounterTelemetry.Value}");
             }
         }
 
-        // Add custom properties
-        var customDimensionsProperty = type.GetProperty("Properties");
-        if (customDimensionsProperty != null)
-        {
-            var properties = customDimensionsProperty.GetValue(telemetry) as IDictionary<string, string>;
-            if (properties != null)
-            {
-                properties["CustomProperty"] = "CustomValue";
-            }
-        }
+        // Add or modify custom properties if needed
+        performanceCounterTelemetry.Properties["CustomCounterProperty"] = "CustomValue";
     }
 }
-
-internal sealed class MyCustomMiddleware : IFunctionsWorkerMiddleware
-{
-    public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
-    {
-        // Logging setup
-        var logger = context.GetLogger<MyCustomMiddleware>();
-        logger.LogInformation("Starting Logging from MyCustomMiddleware!!!");
-
-        // Attempt to get the HTTP request data
-        var reqData = await context.GetHttpRequestDataAsync();
-        var body = await new StreamReader(reqData.Body).ReadToEndAsync();
-
-        Console.WriteLine($"Request Body: {body}");
-
-        reqData.Body.Position = 0;
-    }
-}
-
-//public static void Main()
-//{
-//    var host = new HostBuilder()
-//        .ConfigureFunctionsWorkerDefaults()
-//        .ConfigureAppConfiguration(configuration =>
-//        {
-//            var config = configuration.SetBasePath(Directory.GetCurrentDirectory())
-//                .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true);
-
-//            var builtConfig = config.Build();
-//        })
-//        .ConfigureServices(services =>
-//        {
-//            services.AddSingleton<IMemoryStore>(new VolatileMemoryStore());
-
-//            // return JSON with expected lowercase naming
-//            services.Configure<JsonSerializerOptions>(options =>
-//            {
-//                options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-//            });
-//        })
-//        .Build();
-
-//    host.Run();
-//}

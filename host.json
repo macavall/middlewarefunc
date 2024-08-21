@@ -28,7 +28,6 @@
       "Microsoft.Azure.Functions.Worker.ApplicationInsights": "Trace"
     },
     "applicationInsights": {
-      "samplingExcludedTypes": "Request",
       "samplingSettings": {
         "isEnabled": true
       }
